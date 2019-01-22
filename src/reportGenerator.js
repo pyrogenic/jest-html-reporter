@@ -167,10 +167,7 @@ class ReportGenerator {
 					}
 
 					// Append data to <tr>
-					let duration;
-					if (!this.config.getStable()) {
-						duration = `in ${test.duration / 1000}s`;
-					}
+					const duration = this.config.getStable() ? '' : `in ${test.duration / 1000}s`;
 					testTr.ele('td', { class: 'result' }, (test.status === 'passed') ? `${test.status}${duration}` : test.status);
 				});
 
