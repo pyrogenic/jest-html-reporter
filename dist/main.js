@@ -365,7 +365,21 @@ class ReportGenerator {
 				suiteInfo.ele('div', { class: 'suite-path' }, suite.testFilePath);
 				// Suite execution time
 				const executionTime = (suite.perfStats.end - suite.perfStats.start) / 1000;
-				suiteInfo.ele('div', { class: `suite-time${executionTime > 5 ? ' warn' : ''}` }, `${executionTime}s`);
+				let executionTimeLabel;
+				if (this.config.getStable()) {
+					if (executionTime < 0.01) {
+						executionTimeLabel = 'fast';
+					} else if (executionTime < 1) {
+						executionTimeLabel = 'ok';
+					} else if (executionTime < 5) {
+						executionTimeLabel = 'slow';
+					} else {
+						executionTimeLabel = 'very&nbsp;slow';
+					}
+				} else {
+					executionTimeLabel = `${executionTime}s`;
+				}
+				suiteInfo.ele('div', { class: `suite-time${executionTime > 5 ? ' warn' : ''}` }, executionTimeLabel);
 
 				// Suite Test Table
 				const suiteTable = htmlOutput.ele('table', { class: 'suite-table', cellspacing: '0', cellpadding: '0' });
@@ -544,18 +558,18 @@ const getDateFormat = () =>
 	process.env.JEST_HTML_REPORTER_DATE_FORMAT || config.dateFormat || 'yyyy-mm-dd HH:MM:ss';
 
 /**
- * Returns the configured sorting method
- * @return {String}
- */
-const getSort = () =>
-	process.env.JEST_HTML_REPORTER_SORT || config.sort || 'default';
-
-/**
  * Returns the configured stable output option
  * @return {Boolean}
  */
 const getStable = () =>
 	parseBool(process.env.JEST_HTML_REPORTER_STABLE || config.stable || false);
+
+/**
+ * Returns the configured sorting method
+ * @return {String}
+ */
+const getSort = () =>
+	process.env.JEST_HTML_REPORTER_SORT || config.sort || (getStable() ? 'titleasc' : 'default');
 
 module.exports = {
 	config,
