@@ -124,18 +124,18 @@ const getDateFormat = () =>
 	process.env.JEST_HTML_REPORTER_DATE_FORMAT || config.dateFormat || 'yyyy-mm-dd HH:MM:ss';
 
 /**
- * Returns the configured sorting method
- * @return {String}
- */
-const getSort = () =>
-	process.env.JEST_HTML_REPORTER_SORT || config.sort || 'default';
-
-/**
  * Returns the configured stable output option
  * @return {Boolean}
  */
 const getStable = () =>
 	parseBool(process.env.JEST_HTML_REPORTER_STABLE || config.stable || false);
+
+/**
+ * Returns the configured sorting method
+ * @return {String}
+ */
+const getSort = () =>
+	process.env.JEST_HTML_REPORTER_SORT || config.sort || (getStable() ? 'titleasc' : 'default');
 
 module.exports = {
 	config,
