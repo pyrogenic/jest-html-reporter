@@ -363,23 +363,12 @@ class ReportGenerator {
 				const suiteInfo = htmlOutput.ele('div', { class: 'suite-info' });
 				// Suite Path
 				suiteInfo.ele('div', { class: 'suite-path' }, suite.testFilePath);
+
 				// Suite execution time
-				const executionTime = (suite.perfStats.end - suite.perfStats.start) / 1000;
-				let executionTimeLabel;
-				if (this.config.getStable()) {
-					if (executionTime < 0.01) {
-						executionTimeLabel = 'fast';
-					} else if (executionTime < 1) {
-						executionTimeLabel = 'ok';
-					} else if (executionTime < 5) {
-						executionTimeLabel = 'slow';
-					} else {
-						executionTimeLabel = 'very&nbsp;slow';
-					}
-				} else {
-					executionTimeLabel = `${executionTime}s`;
+				if (!this.config.getStable()) {
+					const executionTime = (suite.perfStats.end - suite.perfStats.start) / 1000;
+					suiteInfo.ele('div', { class: `suite-time${executionTime > 5 ? ' warn' : ''}` }, `${executionTime}s`);
 				}
-				suiteInfo.ele('div', { class: `suite-time${executionTime > 5 ? ' warn' : ''}` }, executionTimeLabel);
 
 				// Suite Test Table
 				const suiteTable = htmlOutput.ele('table', { class: 'suite-table', cellspacing: '0', cellpadding: '0' });
